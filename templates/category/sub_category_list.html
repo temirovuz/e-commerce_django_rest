@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sub category</title>
+</head>
+<body>
+
+{% for category in sub_categories %}
+    {{ category.name }}
+    <br>
+{% endfor %}
+
+{% for product in products %}
+    {{ product.title }}
+{% endfor %}
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Category List</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+
+{% for category in categories %}
+    <a class="category-name" href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+    <br>
+    {#    {% for sub_c in category.children.all %}#}
+    {#        {{ sub_c.name }}#}
+    {#        <br>#}
+    {#    {% endfor %}#}
+    {#    <hr>#}
+{% endfor %}
+
+</body>
+</html>
