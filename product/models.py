@@ -21,6 +21,7 @@ class Size(TimeStampedModel):
     def __str__(self):
         return self.name
 
+
 class Product(TimeStampedModel):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='seller')
     title = models.CharField(max_length=100, unique=True)
@@ -34,6 +35,7 @@ class Product(TimeStampedModel):
 
     custom = ProductManager()
     objects = models.Manager()
+
     def __str__(self):
         return self.title
 

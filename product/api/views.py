@@ -1,9 +1,9 @@
 from rest_framework import generics
 
-from category.api.serializers import CategorySerializer
-from category.models import Category
+from product.api.serializers import ProductSerializer
+from product.models import Product
 
 
-class CategoryListView(generics.ListAPIView):
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
+class ProductListView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.select_related('category').prefetch_related('color', 'size').all()
