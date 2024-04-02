@@ -50,3 +50,4 @@ class RemoveOrderView(APIView):
         order.orderitem.remove(orderitem)
         orderitem.delete()
         return Response({'message': 'ok'}, status=status.HTTP_204_NO_CONTENT)
+
