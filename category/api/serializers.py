@@ -12,3 +12,4 @@ class CategorySerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['product_count'] = instance.products.count()
         return data
+

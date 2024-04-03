@@ -47,7 +47,24 @@ class RemoveOrderView(APIView):
         orderitem = get_object_or_404(OrderItem, pk=pk)
         order = Order.objects.filter(orderitem=orderitem, ordered=False).first()
         self.check_object_permissions(self.request, orderitem)
+        orderitem.product.quantity += orderitem.quantity
+        orderitem.product.save()
         order.orderitem.remove(orderitem)
         orderitem.delete()
         return Response({'message': 'ok'}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+class OrderItemIncrementApiView(APIView):
+    permission_classes = [permissions.IsAuthenticated, OrderItemAuthorPermission]
+    def post(self, request, pk):
+        orderitem = get_object_or_404(OrderItem, pk=pk)
+        self.check_object_permissions(self.request, orderitem)
+        if orderitem.product.quantity <= 0:
+            return Response({"message": "product qolmadi"}, status=status.HTTP_200_OK)
+        orderitem.quantity += 1
+        orderitem.save()
+        orderitem.product.quantity -= 1
+        orderitem.product.save()
+        return Response({'message': 'ok'}, status=status.HTTP_200_OK)
 
