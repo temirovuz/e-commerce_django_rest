@@ -20,7 +20,6 @@ class ProductListView(generics.ListAPIView):
         if products is None:
             products = Product.objects.select_related('category').prefetch_related('color', 'size').all()
         cache.set('products', products)
-
         return products
 
 
