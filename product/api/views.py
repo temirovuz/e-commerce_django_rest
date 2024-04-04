@@ -1,4 +1,7 @@
 from django.core.cache import cache
+from django.utils.decorators import method_decorator
+
+from django.views.decorators.cache import cache_page
 
 from django_filters import rest_framework as filters
 from rest_framework import generics
@@ -21,6 +24,7 @@ class ProductListView(generics.ListAPIView):
         return products
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class ProductDetailView(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
