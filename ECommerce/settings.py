@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'django_celery_results',
+    'drf_yasg',
 
     # local apps
     'base.apps.BaseConfig',
@@ -166,6 +167,10 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
+}
+
+SWAGGER_SETTINGS = {
+    'VALIDATOR_URL': 'http://localhost:8189',
 }
 
 CELERY_BROKER_URL = 'redis://redis:6379'
