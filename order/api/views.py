@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.shortcuts import get_object_or_404
 
 from rest_framework import generics, status
@@ -28,14 +29,11 @@ class OrderAddView(generics.CreateAPIView):
         order, created = Order.objects.get_or_create(customer=request.user, ordered=False)
         orderitem, item_created = OrderItem.objects.get_or_create(product=product, customer=request.user, ordered=False)
         if not item_created:
-            orderitem.quantity += 1
-            product.quantity -= 1
-            product.save()
-            orderitem.save()
+            orderitem.quantity = F('quantity') + 1
+            product.quantity = F('quantity') - 1
         else:
             order.ordered.add(orderitem)
-            product.quantity -= 1
-            product.save()
+            product.quantity = F('quantity') - 1
 
         return Response({'message': 'Ok'}, status=status.HTTP_201_CREATED)
 
@@ -47,39 +45,39 @@ class RemoveOrderView(APIView):
         orderitem = get_object_or_404(OrderItem, pk=pk)
         order = Order.objects.filter(orderitem=orderitem, ordered=False).first()
         self.check_object_permissions(self.request, orderitem)
-        orderitem.product.quantity += orderitem.quantity
-        orderitem.product.save()
+        orderitem.product.quantity + F('orderitem.quantity')
         order.orderitem.remove(orderitem)
         orderitem.delete()
         return Response({'message': 'ok'}, status=status.HTTP_204_NO_CONTENT)
 
 
-
 class OrderItemIncrementApiView(APIView):
     permission_classes = [permissions.IsAuthenticated, OrderItemAuthorPermission]
+
     def post(self, request, pk):
         orderitem = get_object_or_404(OrderItem, pk=pk)
         self.check_object_permissions(self.request, orderitem)
         if orderitem.product.quantity <= 0:
             return Response({"message": "product qolmadi"}, status=status.HTTP_200_OK)
-        orderitem.quantity += 1
+        orderitem.quantity = F('quantity') + 1
         orderitem.save()
-        orderitem.product.quantity -= 1
+        orderitem.product.quantity = F('quantity') - 1
         orderitem.product.save()
         return Response({'message': 'ok'}, status=status.HTTP_200_OK)
 
+
 class OrderItemDecrementApiView(APIView):
     permission_classes = [permissions.IsAuthenticated, OrderItemAuthorPermission]
+
     def post(self, request, pk):
         orderitem = get_object_or_404(OrderItem, pk=pk)
         self.check_object_permissions(self.request, orderitem)
         if orderitem.quantity == 1:
-            orderitem.product.quantity += 1
-            orderitem.product.save()
+            orderitem.product.quantity = F('quantity') + 1
             orderitem.delete()
             return Response({"message": "Order delete"}, status=status.HTTP_204_NO_CONTENT)
-        orderitem.quantity += 1
+        orderitem.quantity = F('quantity') + 1
         orderitem.save()
-        orderitem.product.quantity += 1
+        orderitem.product.quantity = F('quantity') + 1
         orderitem.product.save()
         return Response({'message': 'ok'}, status=status.HTTP_200_OK)
